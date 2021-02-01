@@ -2,6 +2,7 @@
 
 \usepackage[margin=1in, paperwidth=8.3in, paperheight=11.7in]{geometry}
 \usepackage{amsmath,amsfonts,fancyhdr,bbm,graphicx,tikz}
+\usepackage{float,hyperref}
 \usetikzlibrary{automata,positioning}
 \graphicspath{ {img/} }
 \usepackage[section,nohyphen]{DomH}
@@ -15,5 +16,201 @@
 \maketitle
 
 \tableofcontents\newpage
+
+\section{Introduction}\label{sec_introduction}
+
+  \begin{remark}{Types of Data}
+    Data comes in many forms including, but not limited to, the following
+    \begin{itemize}
+      \item Dense \& Sparse data.
+      \item Structured/Relational Data.
+      \item Numerical; Categorical; Ordinal; or Boolean.
+      \item Test (Emails, Tweets, Articles).
+      \item Records (User-Level Data, Timestamped Event Data, Log Files).
+      \item Geo-Based Location Data.
+      \item Data-Time Data.
+      \item Network Data.
+      \item Sensor Data.
+      \item Images and Video.
+      \item Audio and Music.
+    \end{itemize}
+  \end{remark}
+
+  \begin{remark}{Big \& Small Data}
+    Whether a dataset is big or small depends on the computational-resources available, and thus will vary over time. Here are some ways to evaluate this
+    \begin{center}
+      \begin{tabular}{l|p{6cm}|p{6cm}}
+        &\textbf{Big Data}&\textbf{Small Data}\\\hline
+        \textit{Data Condition}&Always unstructured, not read for analysis, many relational database tables that need to be merged.&Ready for analysis, flat file, no need to merge tables.\\\hline
+        \textit{Location}&Cloud, offshore, SQL server etc.&Database, local PC.\\\hline
+        \textit{Data Size}&Over 50k variables, over 50k individuals, random samples, unstructured&File that is in a spreadsheet, that can be viewed on a few sheets of paper.\\\hline
+        \textit{Data Purpose}&No intended purpose.&Intended purpose for data collection.
+      \end{tabular}
+    \end{center}
+  \end{remark}
+
+  \begin{remark}{What is Data Science?}
+    Data-Driven Science. An interdisciplinary field about scientific processes and systems to extract knowledge or insights from data in various forms.
+    \par Data science incorporates fields from: Mathematics, Computer Science; \&, Domain Expertise.
+  \end{remark}
+
+  \begin{remark}{Motivating Applications}
+    Data science is motivated by its applications. Here are some examples of such applications
+    \begin{itemize}
+      \item \textit{Amazon} use recommender systems to suggest products to customers.
+      \item \textit{Energy Companies} use data science to try and predict future usage of customers, so that resources can be applied efficiently.
+      \item \textit{Agriculture} use sensors in fields to collect data in order to monitor crops and predict weather.
+      \item \textit{Healthcare} use sensors in homes to monitor the health of people over long periods of time (especially when the person cannot go to the hospital).
+    \end{itemize}
+  \end{remark}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\textwidth]{DataSciencePipeline.PNG}
+    \caption{The pipeline for approaching problems in data science.}
+    \label{fig_DataSciencePipeline}
+  \end{figure}
+
+  \begin{proposition}{Data Science Pipeline}
+    See \texttt{Figure \ref{fig_DataSciencePipeline}} for a pipeline for approaching data science problems.
+  \end{proposition}
+
+\section{Data Ingress \& Pre-Processing}\label{sec_data_ingress}
+
+\subsection{Data Structures}\label{sec_data_structures}
+
+  \begin{proposition}{Native Python Data Structures}
+    Here are some data structures which are native to python and are popular in data science
+    \begin{itemize}
+      \item \texttt{list} - List of elements of varying types.
+      \item \texttt{set} - List of unique elements of varying types.
+      \item \texttt{dict} - Key-Value pairings.
+    \end{itemize}
+  \end{proposition}
+
+  \begin{proposition}{Non-Native Python Data Structures}
+    Here are some data structures which are \underline{not} native to python but are popular in data science.
+    \begin{itemize}
+      \item \texttt{np.array}.
+      \item \texttt{pandas.DataFrame}.
+    \end{itemize}
+  \end{proposition}
+
+\subsection{Data Formats}\label{sec_data_formats}
+
+  \begin{definition}{Object Persistence}
+    \textit{Object Persistence} is the process of ensuring that the objects which are created are kept through multiple sessions. This comes in two stages
+    \begin{enumerate}
+      \item \textit{Serialisation} - Translating data structures or objects from memory into a format which can be stored.
+      \item \textit{Deserialisation} - The inverse. Translating data structures which have been stored, into memory.
+    \end{enumerate}
+  \end{definition}
+
+  \begin{remark}{Bespoke Serialisation \& Deserialisation}
+    Bespoke serialisation and deserialisation methods can be crafted manually. (e.g. Instantiating an output file; Writing each element of a list to a different line in the file; Closing the file.)
+    \par However, there are limitations to bespoke methods:
+    \begin{itemize}
+      \item Methods are specific to each use case (not standardised).
+      \item Methods may not be robust.
+      \item Methods require testing against many test cases.
+      \item Object metadata is not encoded.
+    \end{itemize}
+    These limitations are rarely a problem in very controlled environments.
+  \end{remark}
+
+  \begin{definition}{Comma-Separated Values (CSV)}
+    \textit{Comma-Separated Values} (CSV) files are well suited to tabular data (inc. matrices). Each line of a \textit{CSV File} stores one row of the table, and each element in a row is separated by a comma.
+    \par \textit{CSV Files} are generally very readable, as well as time- and space-efficient for tabular data.
+  \end{definition}
+
+  \begin{remark}{Using CSV Files}
+    As \textit{CSV Files} are very popular, there are many library methods which can interact with them. Including reading \& writing to and from memory (e.g. \texttt{pandas.read\_csv}).
+  \end{remark}
+
+  \begin{definition}{JavaScript Object Notation (JSON)}
+    \textit{JavaScript Object Notation}\footnote{JSON is not just compatible with JavaScript and is common for many languages \& APIs} (JSON) is a standardised syntax for storing \& exchanging data, used for serialisation. JSON uses text files which are human-readable and \texttt{dict}-like (i.e. have value-key pairs). JSON is designed to be simple so is a very robust language \& suits many purposes.\footnote{\url{https://jsonlint.com/} is a useful site for JSON validation.}
+    \par Limitations of JSON are that a specific conversion process may be required to convert a JSON file into objects in memory, and JSON files can become large due to key repetition.
+  \end{definition}
+
+  \begin{definition}{Hierarchical Data Format (HDF5)}
+    \textit{Hierarchical Data Format} (HDF5) is a standardised format for serialisation. HDF5 is a binary format and tries to mimic  file system-like access. HDF5 files have the following three components
+    \begin{enumerate}
+      \item \textit{Datasets} - Array-like collections of data. Thousands of datasets can be stored in a single file, and can be categorised and tagged however you want.
+      \item \textit{Groups} - Folder-like structures which groups datasets \& other groups.
+      \item \textit{Metadata} - Information which pertains to all the datasets. (e.g. author, edit data \& version).
+    \end{enumerate}
+    \par HDF5 files are ideal for large numerical data sets, and can easily be manipulated by \texttt{numpy}. HDF5 files support a variety of transparent storage features (inc. compression, error-detection and chunked I/O), which \texttt{numpy.array} do not.\footnote{\url{http://docs.h5py.org/en/latest/quick.html} provides a quick-start guide to using HDF5 files in python.}
+  \end{definition}
+
+  \begin{proposition}{HDF5 files vs Traditional File Systems}
+    There are a few key differences between \textit{HDF5 Files} and \textit{Traditional File Systems}.
+    \begin{enumerate}
+      \item \textit{HDF5 Files} are portable, as the entire structure is contained in the file independent of the underlying file system.\footnote{However, it does depend on the HDF5 library.}
+      \item Datasets in \textit{HDF5 Files} are all homogeneous hyper-rectangular numerical arrays, whereas files in traditional file system can be anything.
+      \item Metadata can be added to groups in \textit{HDF5 Files}. This is not possible in traditional file systems.
+    \end{enumerate}
+  \end{proposition}
+
+  \begin{remark}{Other Standardised Serialisation Method}
+    XML, \textit{Protocol Buffers} \& YAML are other popular standardised serialisation methods.
+  \end{remark}
+
+\subsection{Web-Scraping \& APIs}\label{sec_web_scraping_and_apis}
+
+  \begin{remark}{Terms of Use}
+    \textit{Web Scraping} should be done within the website's terms of use.
+  \end{remark}
+
+  \begin{definition}{Web Scraping}
+    \textit{Web Scraping} is the practice of collecting data from websites. This can take many forms, but typically involves taking a raw webpage and parsing the desired data.
+  \end{definition}
+
+  \begin{proposition}{Approaching Web Scraping}
+    To perform \textit{Web Scraping} successfully, you need a good idea of how a webpage is structure. Typically webpages are based around a \texttt{html} file, which are well structured\footnote{Webpages are often interpreted to have a tree structure, with each tag being a node}. Identifying combinations of tags, classes \& ids in the \texttt{html}  file can help locate the desired data.
+    \par It is harder, sometimes impossible, to navigate poorly designed websites as they are less structured and inconsistent.
+  \end{proposition}
+
+  \begin{remark}{Tools for Web Scraping}
+    \textit{Web Scraping} technologies need to be tolerant to several artefacts of real-world data (known as \textit{"wrangling"}) as-well-as errors in the website.
+    \par Some popular tools for \textit{Web Scraping} are
+    \begin{itemize}
+      \item \texttt{BeautifulSoup} - A python library for parsing \texttt{XML} \& \texttt{HTML}.
+      \item \texttt{scrapy} - A python library. Generally faster than \texttt{BeautifulSoup}.
+      \item \texttt{Selenium} - A web-browser plugin, generally used to test web services.
+    \end{itemize}
+  \end{remark}
+
+  \begin{definition}{Web APIs}
+    \textit{Web APIs} greatly simplify \textit{Web Scraping} by provide a portal for explicit data acquisition, and are generally less prone to the issues which arise when \textit{Web Scraping}.\footnote{See \url{https://github.com/public-apis/public-apis} for a categorised list of public APIs.}
+    \begin{itemize}
+      \item The code running \textit{Web APIs} is optimised for data requesting \& retrieval. It does not waste time on visualisation or aesthetics. This means the bandwidth required for an \textit{API} request is much lower than for a similiar \textit{Web Scraping} process (As images etc. do not need to be loaded).
+      \item \textit{Web API} querying is robust, reliable, well maintained and documented with a static schema (\texttt{HTML}-based \textit{Web Scraping} is not).
+      \item \textit{Web APIs} use standardised \textit{Serialisation Tools} (e.g. JSON).
+      \item \textit{Web APIs} have already extracted and organised the desired data, however this does mean the user can only access what the operator will allow. This is much better than \texttt{HTML}-based \textit{Web Scraping} where you rely upon fickle naming conventions of tags.
+    \end{itemize}
+  \end{definition}
+
+  \begin{definition}{RESTful APIs}
+    \textit{Representational State Transfer APIs} (REST/RESTful) are a popular form of \textit{Web API} and generally require an \textit{API Key} to access data.
+    \par Request to \textit{RESTful APIs} generally involves constructing a URL which contains your keys and the parameters of your query.
+  \end{definition}
+
+  \begin{remark}{Regular Expression (RegEx)}
+    \textit{Regular Expression} (ReGex) queries are useful for extracting data, either while web scraping or from API requests.\footnote{\url{http://pythex.org/} is a website which can perform \textit{RegEx}.} Python has the \texttt{re} library for \textit{RegEx} queries, two popular methods from this library are
+    \begin{enumerate}
+      \item \texttt{re.match} - Attempts to match a \textit{RegEx} pattern to the whole string.
+      \item \texttt{re.search} - Searches for the \underline{first} occurrence of a \textit{RegEx} pattern in a string.
+    \end{enumerate}
+  \end{remark}
+
+\section{Storage \& Management}\label{sec_storage_and_management}
+
+\section{Transformation \& Integration}\label{sec_transformation_and_integration}
+
+\section{Exploration \& Visualisation}\label{sec_exploration_and_visualisation}
+
+\section{Deployment}\label{sec_deployment}
+
+\section{Sharing \& Privacy}\label{sec_sharing_and_privacy}
 
 \end{document}
