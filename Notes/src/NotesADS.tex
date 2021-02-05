@@ -203,6 +203,184 @@
     \end{enumerate}
   \end{remark}
 
+\section{Privacy}\label{sec_privacy}
+
+\subsection{IRL Examples}\label{sec_privacy_examples}
+
+  \begin{remark}{AOL Data Incident, 2006}
+    In 2006, \textit{AOL Research} released to the public, for the purpose of research, a text file containing 20mn search terms from over 650k users, over a 3-month period.
+    \par The users were anonymised in the in the data, but personally identifiable information was present in many of the search terms.
+    \par \textit{AOL Research} retracted the document shortly after publishing.
+  \end{remark}
+
+  \begin{remark}{Netflix Prize, 2007}
+    In 2007, \textit{Netflix} ran a competition where \$1mn was offered to anyone who was able to produce a system which outperformed their existing recommender system by at least 10\%.
+    \par The training data offered by \textit{Netflix} contained <user,movie,date,grade> and customer ids were anonymised.
+    \par It was later found that some users had their \textit{Netflix} and \textit{IMDb} accounts linked (so reviews were posted on both). This meant the training data could be partially de-anonymised. This led to lawsuits and \textit{Netflix} cancelling future competitions.
+  \end{remark}
+
+  \begin{remark}{Pay Attention}
+    The moral of these examples is that you have to be really careful and diligent when anonymising data as there may be non-obvious ways for people to de-anonymise it. (Often through little fault of your own).
+  \end{remark}
+
+\subsection{Security \& Statistical Database}\label{sec_security_and_statistical_database}
+
+  \begin{definition}{Statistical Database}
+    A \textit{Statistical Database} is a database for statistics. They can come in several forms
+    \begin{itemize}
+      \item \textit{Tabular Data} - Tables with counts or magnitudes.
+      \item \textit{Queryable Databases} - On-line databases which accept statistical queries (e.g. min, max, sum etc.)
+      \item \textit{Microdata} - Files where each record contains information about an individual.
+    \end{itemize}
+  \end{definition}
+
+  \begin{remark}{Privacy Trade-Off}
+    \textit{Statistical Databases} have to trade-off privacy and functionality. Generally, more privacy means less functionality.
+  \end{remark}
+
+  \begin{definition}{Identifiers}
+    \textit{Identifiers} are attributes that unambiguously identify someone (e.g. passport number, NI number, name etc.)
+  \end{definition}
+
+  \begin{definition}{Quasi-Identifiers}
+    \textit{Quasi-Identifiers} are attributes which identify someone, but there is some ambiguity. Often, having multiple \textit{Quasi-Identifiers} are enough to confidently identify someone. (e.g. address, age, gender).
+  \end{definition}
+
+  \begin{definition}{Confidential Attributes}
+    \textit{Confidential Attributes} are attributes which contain sensitive information about an individual (e.g. salary, religion, medical conditions etc.)
+  \end{definition}
+
+  \begin{definition}{Non-Confidential Attributes}
+    \textit{Non-Confidential Attributes} are attributes which do \underline{not} contain sensitive information about an individual.
+  \end{definition}
+
+  \begin{remark}{Anonymisation, Identifiers \& Quasi-Identifiers}
+    When anonymising a data set:
+    \begin{itemize}
+      \item \textit{Identifiers} need to be suppressed from the data sets (i.e. removed).
+      \item \textit{Quasi-Identifiers} hold disclosure risk as they can often not be suppress due their high analytical value, but can often be linked with other non-anonymised datasets to de-anonymise your dataset.
+    \end{itemize}
+  \end{remark}
+
+  \begin{definition}{Attribute Disclosure}
+    \textit{Attribute Disclousure} is when the value of a confidential attribute is made available, and in doing so the individual is easier to identifier (compared to the value not being disclosed).
+  \end{definition}
+
+  \begin{definition}{Identity Disclosure}
+    \textit{Identity Disclosure} is when an entire record in an anonymised data set can be linked with that individual's identity.
+  \end{definition}
+
+  \begin{definition}{Membership Disclosure}
+    \textit{Membership Disclosure} is whether or not data about an individual is contained in a dataset.
+  \end{definition}
+
+  \begin{definition}{External Attack on a Table}
+    An \textit{External Attack} on a table occurs when another dataset is released which contains data which comprises more table, or can be combined with your table to comprise others.
+  \end{definition}
+
+  \begin{definition}{Internal Attack on a Table}
+    An \textit{Internal Attack} on a table occurs when those within the table (i.e. with access to it and know which data represents them) are able to deduce which data belongs to other people by a process of elimination.
+    \par Only really possible when the table has few respondents.
+  \end{definition}
+
+  \begin{definition}{Dominance Attack on a Table}
+    An \textit{Internal Attack} on a table occurs a (or a few) respondents dominate the contribution in a particular cell of a magnitude table, these \textit{Dominant Respondents} are then able to upper-bound the contributions from the rest due it being easier to differentiate other users from them.
+  \end{definition}
+
+  \begin{proposition}{Combatting Table Attacks}
+    There are two main approaches to combatting \textit{Table Attacks}
+    \begin{enumerate}
+      \item \textit{Non-Perturbative} techniques which do \underline{not} modify the values in the cells, but they may suppress or recode them (e.g. cell suppression, recoding of categorical attributes).
+      \item \textit{Perturbative} techniques do modify the values in the cells (e.g. controlled rounding).
+    \end{enumerate}
+  \end{proposition}
+
+  \begin{proposition}{Combatting Database Attacks}
+    There are three main approaches to combatting attacks on databases, all focused around adjusting/controlling queries
+    \begin{enumerate}
+      \item \textit{Query Input Perturbation} - Perturbation is applied to records on which queries are computed.
+      \item \textit{Query Output Perturbation} - Perturbation is applied to the results of a query.
+      \item \textit{Query Restriction} - The database refuses certain queries.
+      \item \textit{Camoflage} - Returns answers which have been made non-exact in some deterministic fashion.
+    \end{enumerate}
+  \end{proposition}
+
+  \begin{remark}{Differential Attack\footnote{Not proper name.}}
+    Suppose you know that someone is going to be changing doctors soon (and thus will be removed from the doctors database), if you copied the database before and after this person moves you could likely deduce details about the individual by comparing the two versions.
+    \par How do we prevent this?
+  \end{remark}
+
+  \begin{definition}{Differential Privacy}
+    Consider a learner implements a summary statistic $A$ (e.g. sum of all elements); an adversary proposes two datasets $S$ and $S'$ which differ by only one row; and a test set $Q$. The learner wants the summary statistic to have the same value if only one row has changed.
+    \par Summary statistic $A$ is \textit{$\varepsilon$-Differentially Private} iff
+    \[ \left|\ln\left(\frac{\prob(A(S)\in Q)}{\prob(A(S')\in Q)}\right)\right|\leq\varepsilon \]
+    Note that \textit{Differential Privacy} is a condition on the release mechanism of the data $A$, not on the data $S,S'$ itself.
+  \end{definition}
+
+  \begin{remark}{Differential Privacy in Practice}
+    In practice we avoid differential privacy issues by adding noise to our responses (either to all responses, or incorrectly responding to some queries).
+  \end{remark}
+
+\subsection{$k$-Anonymity}\label{sec_k_anonymity}
+
+  \begin{definition}{$k$-Anonymity}
+    A dataset satisfies \textit{$k$-Anonymity} if each combination of values of \textit{Quasi-Identifier Attributes} in the table are shared by at least $k$ records.
+    \par Measuring \textit{$k$-Anonymity} requires a brute force approach which compares every pair of records in the table.
+  \end{definition}
+
+  \begin{proposition}{Achieving $k$-Anonymity}
+    There are two main approaches to achieving \textit{$k$-Anonymity}:
+    \begin{itemize}
+      \item \textit{Suppression} - Replace the values of attributes with an asterisk.
+      \item \textit{Generalisation} - Values of attributes are replaced with a broader category. (e.g. age-ranges rather than exact age)
+    \end{itemize}
+  \end{proposition}
+
+  \begin{proposition}{$k$-Anonymity Attacks}
+    \textit{$k$-Anonymity} does not protect against attribute disclosure attacks in general if the values of \textit{Confidential Attributes} are very similar in the group of $k$ records who share \textit{Quasi-Identifier} values.
+    \par Here are two specific attacks that can happen
+    \begin{itemize}
+      \item \textit{Homogeneity Attack} - If all records in the set of $k$ identical records have the same \textit{Sensitive Value}, then the value can likely be predicted (and would comprise all $k$).
+      \item \textit{Background Knowledge Attack} - If associations exist between one or more \textit{Quasi-Identifier Attributes} and a \textit{Sensitive Attribute} then the set of possible values of the \textit{Sensitive Attribute} is reduced.
+    \end{itemize}
+  \end{proposition}
+
+  \begin{definition}{$l$-Diversity}
+    \textit{$l$-Diversity} is an extension of \textit{$k$-Anonymity}.
+    \par \textit{$l$-Diversity} requires that the values of all \textit{Confidential Attributes} within any group of $k$-anonymous records contain at least $l$ clearly distinct values.
+  \end{definition}
+
+  \begin{proposition}{Limitations of $l$-Diversity}
+    Here are two limitations of \textit{$l$-Diversity}
+    \begin{itemize}
+      \item Not every value shows equal sensitivity. (A rare positive indicator for a disease may provide more information than a common negative indicator).
+      \item It ensures diversity of sensitive values in each group, but it does not recognise that values may be semantically similar.
+    \end{itemize}
+  \end{proposition}
+
+  \begin{definition}{$t$-Closeness}
+    \textit{$t$-Closeness} requires that the distribution of the confidential attribute within a group of $k$ records is similar to the distribution of the confidential attribute in the entire data set (at most distance $t$ between the two distributions).
+  \end{definition}
+
+  \begin{remark}{Tools for Anonymisation}
+    Here are three popular tools for anonymisation
+    \begin{enumerate}
+      \item \textit{ARX} - Applies $k$-anonymity, $l$-diversity and $t$-clossness in Java.
+      \item \textit{Argus} - Creates safe microdata files.
+      \item \textit{SdcMicro} - Provides disclosure control methods for anonymisation and risk-estimation.
+    \end{enumerate}
+  \end{remark}
+
+\subsection{Other Approaches}\label{sec_other_approaches}
+
+  \begin{definition}{Privacy-Preserving Data Mining, PPDM}
+    \textit{Privacy-Preserving Data Mining} (PPDM) seeks privacy for the data's owner when several owners wish to co-operate without giving away their data to each other
+  \end{definition}
+
+  \begin{definition}{Private Information Retrieval}
+    \textit{Private Information Retrieval} (PIR) seeks user privacy to allow the user of a database to retrieve information without the database knowing which item was retrieved.
+  \end{definition}
+
 \section{Storage \& Management}\label{sec_storage_and_management}
 
 \section{Transformation \& Integration}\label{sec_transformation_and_integration}
