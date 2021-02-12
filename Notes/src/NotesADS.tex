@@ -383,6 +383,214 @@
 
 \section{Storage \& Management}\label{sec_storage_and_management}
 
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\textwidth]{TypicalDataArchitecture.PNG}
+    \caption{Typical data architecture.}
+    \label{fig_TypicalDataArchitecture}
+  \end{figure}
+
+  \begin{proposition}{Typical Data Architecture}
+    Organisation tend to have two main data stores
+    \begin{enumerate}
+      \item A \textit{Data Warehouse} which contains copies of historic data. Data analysis is performed on this data as it is not critical to the operation of the organisation. \textit{Data Warehouses} usually  allow data analysts read-only access.
+      \item Several \textit{Operative Databases} which the organisation's core products use and rely on. Data analysis should not be performed on this databases directly as it could interfere with customers (or worse, break the company's products).
+    \end{enumerate}
+    See \texttt{Figure \ref{fig_TypicalDataArchitecture}} for an illustration.
+  \end{proposition}
+
+  \begin{definition}{Datalake}
+    TODO
+  \end{definition}
+
+\subsection{Storage Technologies}
+
+  \begin{definition}{BLOB Storage}
+    A \textit{Binary Large Object} (BLOB) storage is typically used for large, unstructured files (e.g. images \& backup files).
+    \par Due to being unstructured, \textit{BLOB} files are not quick to query and are best used just as a record of the data.
+    \par \textit{BLOB} files are generally accessed using a REST-API or an SDK, they are not mountable as a disk and drivers need to be build into applications in order for the app to acess the \textit{BLOB Storage}. \textit{Spark} is a tool used by many datalakes for \textit{BLOB} storage.
+    \par Data storage providers typically offer two tiers of \textit{BLOB} storage
+    \begin{enumerate}
+      \item \textit{Hot Access} - Data is accessed frequently.
+      \item \textit{Cold Access} - Data is not accessed very often. (Cheaper, but less availability).
+    \end{enumerate}
+  \end{definition}
+
+  \begin{definition}{Disk Storage}
+    \textit{Disk Storage}\footnote{AKA \textit{Block Storage}.} are an alternative form of storage, but are essentially a facade for \textit{BLOB-backed storage} and tend to be up to 1TB in size.
+    \par \textit{Disk Storage} can be mounted to a virtual machine. Once mounted and formatted, the file is accessible like any other local file, but with greater throughput than standard-file-storage (60/sec per blob)\footnote{Throughput is lower than \textit{BLOB Storage}.}
+    \par \textit{Disk Storage} is ideal when you want to move applications which you were using locally into cloud storage, and you want the data to be decoupled from the virtual machine\footnote{As, otherwise, if the machine was to die then you would loose your data too!}. But, only one person can access a \textit{Disk Storage} at a time.
+  \end{definition}
+
+  \begin{definition}{File Storage}
+    \textit{File Storage}\footnote{AKA \textit{Network Attached Storage} (NAS).} uses bytes across a network and a using a protocol (e.g SMB), this creates the illusion of the data being a local files. This means several instances of an application can access the data at the same time.
+    \par \textit{File Storage} can be upto 5TB each and has a maximum throughput of 60MB/sec across a share\footnote{Slower than BLOB \& Disk}. Throughput is better in Local-Area networks.
+    \par \textit{File Storage} is backed by \textit{BLOB Storage} and thus is just as durable.
+    \par Capabilities such as concurrency and file locking can be introduced into \textit{File Storage}, availability depends on the protocol being used.
+  \end{definition}
+
+\subsection{Databases}
+
+  \begin{remark}{Database Classification}
+    There are two features typically used to classify databases
+    \begin{enumerate}
+      \item The model they use to store data.
+      \item Their ``Consistency/Availability'' trade-off.
+    \end{enumerate}
+  \end{remark}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\textwidth]{ColumnStores.PNG}
+    \caption{Example of data may be structured in a \textit{Colum Store}.}
+    \label{fig_ColumnStores}
+  \end{figure}
+
+  \begin{definition}{Relational Database}
+    TODO
+  \end{definition}
+
+  \begin{definition}{Database Models}
+    Databases typically use one of the following five models to store \& organise data.
+    \begin{enumerate}
+      \item \textit{Key-Value Stores} - A dictionary (keys map to values in a deterministic fashion). These databases only support get \& put operations\footnote{There is no support for operations beyond simple CRUD (Create-Read-Update-Delete)}, and all data is stored as a \textit{BLOB}.
+      \par \textit{Key-Value Stores} are \textit{schemaless} meaning all assumptions about the structure of the data is implicitly encoded into the application log (and not explicitly defined by a data-definition language).
+      \par \textit{Key-Value Stores} are easy to partition, query, have low latency and high throughput.
+
+      \item \textit{Wide-Column Stores} - A distributed, multi-level, sorted map. This means that \textit{Wide Column Stores} have several layers of ``keys'': the first layer, called ``Row Keys'', identify rows which contain a given \textit{key-value pair}; The second layer is known as ``column keys''.\footnote{See \texttt{Figure \ref{fig_ColumnStores}}.} (Columns can be grouped into ``Column Families''. Values in the same column family and same row are stored on the same disk).
+      \par \textit{Wide-Column Stores} are space efficient as null values take zero space, and store data in a lexicographic order wrt their keys. Good compression rate allows for efficient querying of row subsets. Versions of each cell can be stored.
+
+      \item \textit{Document Stores} - An implementation of \textit{Key-Value Stores} but each value (known as a ``document'') has to be in a semi-structured format (e.g. JSON). An entire document can be fetched using its unique key. \textit{Document Stores} allow for more complex queries than \textit{Key-Value Stores}, such as: retrieval of parts of documents; aggregation; query-by-example; and, full-text search.
+
+      \item \textit{Graph Databases} - Store data sources in nodes and uses edges to define relationships between data sources. This is really good for complex relationships, but not very scalable as \textit{Graph Partitioning} is NP-Hard.
+
+      \item \textit{Search Engines}\footnote{Not strictly a database} - Essentially an inverted index, with some meta-data and query optimisation. Often will link from a value to the databases which contain that value.
+    \end{enumerate}
+  \end{definition}
+
+  \begin{remark}{Choosing Database Model}
+    When choosing which model of database to use, we are generally trading between the models ability to handle ``size'' and ``complexity''. Generally \textit{Key-Value Stores} are best for the simplest datasets, then \textit{Column Stores}, then \textit{Document Stores} and finally, \textit{Graph Databases} are typically best for handling complex datasets (but do no scale well).
+    \par A \textit{Relational Database} is the default model to use for most projects, as they perform well for both size \& complexity up to reasonably large projects.
+  \end{remark}
+
+  \begin{theorem}{CAP Theorem}
+    The \textit{CAP Theorem}\foonote{Proved by Gilbert and Lynch in 2002.} states that a distributed system or database can guarantee at most two of the following three properties at any one time
+    \begin{itemize}
+      \item \textit{Consistency} (C) - All users have the same view on the data at all times, with minimal \textit{Latency}.
+      \item \textit{Availability} (A) - All users can always read and write to the database.
+      \item \textit{Partition-Tolerant} (P) - The system works well across physical network partitions (even if a machine fails or the cluster is split).
+    \end{itemize}
+  \end{theorem}
+
+  \begin{proposition}{Database Consistency-Availability Trade-Off}
+    Databases fulfil one of the following
+    \begin{itemize}
+      \item \textit{Available \& Partition Tolerant} (AP). (Never a relational database).
+      \item \textit{Consistent \& Partition Tolerant} (CP). (Never a relational database).
+      \item \textit{Not Partition Tolerant} (CA).
+    \end{itemize}
+  \end{proposition}
+
+  \begin{definition}{Sharding}
+    \textit{Sharding} specifies how data should be partitioning data across several nodes. This is an important technique in data storage as data is often stored in distributed networks.
+    \par Here are some popular approachs to \textit{Sharding}
+    \begin{itemize}
+      \item \textit{Hashing} - Apply a hash function to the data to determine which partition to place it in. Data-pieces which the same hash will be stored on the same machine. \textit{Hashing} creates balanced partitions, but has no data locality.
+      \item \textit{Range} - Data-pieces are group according to whether their value falls into a given range. This allows for easier range search and sorting, but is not necessarily balanced.
+      \item \textit{Entity-Group} - Explicitly define how to co-locate data. This allows for easy access (equivalent to a single node), but you cannot change the partition after the fact.
+    \end{itemize}
+    When implementing these approaches we want the partitions to be as balanced as possible, for maximal efficiency.
+  \end{definition}
+
+  \begin{definition}{Replication}
+    \textit{Replication} is the practice of replicating data so that it is safe should a machine fail. The difficultly in \textit{Replication} is \textit{Sychronisation}.
+    \par Here are the two approaches for when to update data
+    \begin{itemize}
+      \item \textit{Asynchronous} (lazy) - Data is only read on request, this means writing is fast but some replicas may not have been updated (and become stale).
+      \item \textit{Synchronous} (eager) - Data is consistent across users, but read-write is slower as the database need to co-ordinate data between users.
+    \end{itemize}
+    \par Here are the two approaches for where to store data
+    \begin{itemize}
+      \item \textit{Primary Copy} - A single node accepts write requests and all other nodes just replicate this node. This is quick and easy to keep consistent, but creates a single point of failure.
+      \item \textit{Update Anywhere} - Any node can accept write requests, and will then propagate these requests to the rest of the network. This approach is fast to write, but requires co-ordination. This approach is more resilient to hardware failure
+    \end{itemize}
+  \end{definition}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\textwidth]{DataStorageFlowCharts.PNG}
+    \caption{Flow chart to determine which data storage technology to use, given your requirements.}
+    \label{fig_DataStorageFlowChart}
+  \end{figure}
+
+\subsection{Data Wrangling}
+
+  \begin{definition}{Data Wrangling}
+    \textit{Data Wrangling} is the process of getting to know your data and getting it into a format which you are comfortable with. This should get you interested in the project.
+    \par A big part of \textit{Data Wrangling} is detecting inaccurate or malformed records and then correcting or removing them. (Data cleaning, validation, debugging, transforming, formatting, pre-processing).
+    \par \textit{Data Wrangling} is an iterative process, you will often return to after ``evaluating your model'' in order to tweak the data some more.
+  \end{definition}
+
+  \begin{remark}{Data Used}
+    Some \textit{Data Wrangling} tasks need to be performed on the whole data set (e.g. checking \& validation), but others can be performed with a random, representative subset (e.g. exploring)\footnote{You may want to seek out some outliers, especially when your project is interest in outlier cases.}.
+  \end{remark}
+
+  \begin{remark}{Strategies for Data Wrangling}
+    Here are some things to consider when \textit{Data Wrangling}
+    \begin{itemize}
+      \item \textit{Type Screening} - Ensuring data is the type you expect and want.
+      \item \textit{Range Check} - Check data is within legal ranges or categories.
+      \item \textit{Illegal Values} - Check data takes legal values.
+      \item \textit{Multi-Column Validation} - Data in different columns is consistent.
+      \item \textit{Check Unique/Distinct Values} - Check that unique values are reasonable. (Not typos).
+      \item \textit{Remove Duplicates} - Remove duplicate records.
+    \end{itemize}
+  \end{remark}
+
+  \begin{remark}{Tools}
+    There are several useful tools for \textit{Data Wrangling}, including
+    \begin{itemize}
+      \item Data Wrangler \url{http://vis.stanford.edu/wrangler/}
+      \item Pandas.
+      \item Regular Expressions.
+    \end{itemize}
+  \end{remark}
+
+  \begin{remark}{NoSQL Databases}
+    \textit{NoSQL Databases} (e.g. MongoDB, Neo4j) are not as strongly typed as SQL databases.
+  \end{remark}
+
+  \begin{remark}{Missing Data}
+    Missing data is common and can occur for many reasons
+    \begin{itemize}
+      \item Data may be sensitive and people choose to withhold.
+      \item Data may be deemed irrelevant and skipped.
+      \item Data may be censored.
+      \item Communication link may fail (battery dies).
+      \item Data collection may be aborted (boredom).
+      \item Data may be corrupted.
+      \item Data may not be known by the respondent.
+    \end{itemize}
+  \end{remark}
+
+  \begin{remark}{Informative Missing Data}
+    Sometimes the fact that data is missing can be very informative. It can indicate that the technique/equipment used to take a reading was changed, potentially due to a change in circumstances (A patient went into/out of intensive case).
+    \par Imputing values in this case would loose this information.
+
+  \end{remark}
+
+  \begin{remark}{Dealing with Missing Data}
+    Here are some approaches which can be taken to deal with missing data
+    \begin{itemize}
+      \item Cross reference against validated external information.
+      \item Impute values from nearest neighbours.
+      \item Impute value from mean/median/mode.
+      \item Impute from a model-based calculation.
+      \item Perform multiple imputations.
+      \item Use a ``Missing Data'' indicator.
+    \end{itemize}
+  \end{remark}
+
 \section{Transformation \& Integration}\label{sec_transformation_and_integration}
 
 \section{Exploration \& Visualisation}\label{sec_exploration_and_visualisation}
