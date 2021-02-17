@@ -474,7 +474,7 @@
   \end{remark}
 
   \begin{theorem}{CAP Theorem}
-    The \textit{CAP Theorem}\foonote{Proved by Gilbert and Lynch in 2002.} states that a distributed system or database can guarantee at most two of the following three properties at any one time
+    The \textit{CAP Theorem}\footnote{Proved by Gilbert and Lynch in 2002.} states that a distributed system or database can guarantee at most two of the following three properties at any one time
     \begin{itemize}
       \item \textit{Consistency} (C) - All users have the same view on the data at all times, with minimal \textit{Latency}.
       \item \textit{Availability} (A) - All users can always read and write to the database.
@@ -518,10 +518,78 @@
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\textwidth]{DataStorageFlowCharts.PNG}
+    \includegraphics[width=.7\textwidth]{DataStorageFlowChart.PNG}
     \caption{Flow chart to determine which data storage technology to use, given your requirements.}
     \label{fig_DataStorageFlowChart}
   \end{figure}
+
+\subsubsection{Graph Databases}
+
+  \begin{figure}[H]
+    \centering\includegraphics[width=.7\textwidth]{GraphModel.PNG}
+    \caption{Example of a graph model for a database storing details about football transfers.}
+    \label{fig_graph_model}
+  \end{figure}
+
+  \begin{definition}{Graph Model}
+    A graph model can be used to represent data dependencies in a database
+    \begin{itemize}
+      \item \textit{Nodes} are used to represent datafields or tables. Nodes are labelled with the fields which are unique to them.
+      \item \textit{Edges} are used to show which nodes depend on each other, often with directionality. Edges are labelled with the fields which are shared (ie connect) between two nodes.
+    \end{itemize}
+    See \texttt{Figure \ref{sec_storage_and_management}.\ref{fig_graph_model}} for an example.
+  \end{definition}
+
+  \begin{figure}[H]
+    \centering\includegraphics[width=.7\textwidth]{GraphVsRelational.PNG}
+    \caption{Comparison of the data-storage architectures for Relation Databases (Left) compared to Graph Databases (Right).}
+    \label{fig_graph_vs_relational}
+  \end{figure}
+
+  \begin{proposition}{Relational vs Graph Database}
+    Here are some comparisons between \textit{Relational} and \textit{Graph Databases}:
+    \begin{itemize}
+      \item In a \textit{Relational Database} relationships are ``soft'' and only computed at query time.
+      \item In a \textit{Graph Database} relationships are ``hard'' as the relationships themselves are stored on the disk.
+    \end{itemize}
+    See \texttt{Figure \ref{sec_storage_and_management}.\ref{fig_graph_vs_relational}}.
+  \end{proposition}
+
+  \begin{proposition}{Neo4J}
+    \textit{Neo4J} is a piece of \textit{Graph Database} management software.
+    \par Here is an example of a \textit{Neo4J} query\footnote{The equivalent SQL query is \texttt{SELECT * FROM players AS player WHERE player.name = ``Cristiano Ronaldo'';} }
+    \begin{quote}
+      \texttt{MATCH (player:Player) WHERE player.name = ``Cristiano Ronaldo'' RETURN player;}
+    \end{quote}
+    In this query \texttt{player} is a variable we create, \texttt{Player} is the type of node that \texttt{player} is and \texttt{name}  is a property of this variable.
+    \par We can before logical queries too. The following query returns people who have been a coach \underline{and} a player.
+    \begin{quote}
+      \texttt{MATCH (n) WHERE n:Player AND n:Coach RETURN n;}
+    \end{quote}
+  \end{proposition}
+
+  \begin{proposition}{Traversals}
+    \textit{Traversals} are a feature which are unique to \textit{Graph Databases}. \textit{Traversals} define what relationship between several nodes to consider, and we can make queries on all these nodes\footnote{Similar to \textit{Joins} in relational databases.}.
+    \par The query below fetches all transfers away from Man Utd\footnote{The equivalent SQL query is not as clean \texttt{SELECT from.name FROM transfers AS t JOIN clubs AS clubFrom ON t.from\_club\_id =clubFrom.id WHERE from.name="Manchester United";} }
+    \begin{quote}
+      \texttt{MATCH (from:Club) <- [:FROM\_CLUB]-(transfer:Transfer)}\\
+      \texttt{WHERE from.name="Manchester United"}
+    \end{quote}
+    \par We can extend this query to be all transfer from Man Utd to Real Madrid\footnote{The SQL for this would require two joins}
+    \begin{quote}
+      \texttt{MATCH (from:Club) <- [:FROM\_CLUB]-(transfer:Transfer)-[:TO_CLUB]->(to:Club)}\\
+      \texttt{WHERE from.name="Manchester United"}
+    \end{quote}
+    This query nicely shows how \texttt{<-[]-} and \texttt{-[]->} define the direction of data flow. We can extend this to find any path, including cycles.
+  \end{proposition}
+
+  \begin{proposition}{Length of Relationship}
+    \textit{Neo4j} allows for variable length relationships. With \texttt{-[:\_\_*n..]->} notation, where meaning a chain of at least \texttt{n} relationships.
+    \par The following statement defines a relationship where a player leaves a club and then after some number of transfers returns to the club.
+    \begin{quote}
+      \texttt{(c:Club)<-[f:FROM_CLUB]-(sale:Transfer) -[:NEXT*1..]->(rebuy:Transfer)-[t:TO_CLUB]->(c)}
+    \end{quote}
+  \end{proposition}
 
 \subsection{Data Wrangling}
 
