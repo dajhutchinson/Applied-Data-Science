@@ -77,7 +77,7 @@
 
 \section{Data Ingress \& Pre-Processing}\label{sec_data_ingress}
 
-\subsection{Data Structures}\label{sec_data_structures}
+\subsection{Data Structures}
 
   \begin{proposition}{Native Python Data Structures}
     Here are some data structures which are native to python and are popular in data science
@@ -96,7 +96,7 @@
     \end{itemize}
   \end{proposition}
 
-\subsection{Data Formats}\label{sec_data_formats}
+\subsection{Data Formats}
 
   \begin{definition}{Object Persistence}
     \textit{Object Persistence} is the process of ensuring that the objects which are created are kept through multiple sessions. This comes in two stages
@@ -155,7 +155,7 @@
     XML, \textit{Protocol Buffers} \& YAML are other popular standardised serialisation methods.
   \end{remark}
 
-\subsection{Web-Scraping \& APIs}\label{sec_web_scraping_and_apis}
+\subsection{Web-Scraping \& APIs}
 
   \begin{remark}{Terms of Use}
     \textit{Web Scraping} should be done within the website's terms of use.
@@ -205,7 +205,7 @@
 
 \section{Privacy}\label{sec_privacy}
 
-\subsection{IRL Examples}\label{sec_privacy_examples}
+\subsection{IRL Examples}
 
   \begin{remark}{AOL Data Incident, 2006}
     In 2006, \textit{AOL Research} released to the public, for the purpose of research, a text file containing 20mn search terms from over 650k users, over a 3-month period.
@@ -223,7 +223,7 @@
     The moral of these examples is that you have to be really careful and diligent when anonymising data as there may be non-obvious ways for people to de-anonymise it. (Often through little fault of your own).
   \end{remark}
 
-\subsection{Security \& Statistical Database}\label{sec_security_and_statistical_database}
+\subsection{Security \& Statistical Database}
 
   \begin{definition}{Statistical Database}
     A \textit{Statistical Database} is a database for statistics. They can come in several forms
@@ -321,7 +321,7 @@
     In practice we avoid differential privacy issues by adding noise to our responses (either to all responses, or incorrectly responding to some queries).
   \end{remark}
 
-\subsection{$k$-Anonymity}\label{sec_k_anonymity}
+\subsection{$k$-Anonymity}
 
   \begin{definition}{$k$-Anonymity}
     A dataset satisfies \textit{$k$-Anonymity} if each combination of values of \textit{Quasi-Identifier Attributes} in the table are shared by at least $k$ records.
@@ -371,7 +371,7 @@
     \end{enumerate}
   \end{remark}
 
-\subsection{Other Approaches}\label{sec_other_approaches}
+\subsection{Other Approaches}
 
   \begin{definition}{Privacy-Preserving Data Mining, PPDM}
     \textit{Privacy-Preserving Data Mining} (PPDM) seeks privacy for the data's owner when several owners wish to co-operate without giving away their data to each other
@@ -577,7 +577,7 @@
     \end{quote}
     \par We can extend this query to be all transfer from Man Utd to Real Madrid\footnote{The SQL for this would require two joins}
     \begin{quote}
-      \texttt{MATCH (from:Club) <- [:FROM\_CLUB]-(transfer:Transfer)-[:TO_CLUB]->(to:Club)}\\
+      \texttt{MATCH (from:Club) <- [:FROM\_CLUB]-(transfer:Transfer)-[:TO\_CLUB]->(to:Club)}\\
       \texttt{WHERE from.name="Manchester United"}
     \end{quote}
     This query nicely shows how \texttt{<-[]-} and \texttt{-[]->} define the direction of data flow. We can extend this to find any path, including cycles.
@@ -587,9 +587,11 @@
     \textit{Neo4j} allows for variable length relationships. With \texttt{-[:\_\_*n..]->} notation, where meaning a chain of at least \texttt{n} relationships.
     \par The following statement defines a relationship where a player leaves a club and then after some number of transfers returns to the club.
     \begin{quote}
-      \texttt{(c:Club)<-[f:FROM_CLUB]-(sale:Transfer) -[:NEXT*1..]->(rebuy:Transfer)-[t:TO_CLUB]->(c)}
+      \texttt{(c:Club)<-[f:FROM\_CLUB]-(sale:Transfer) -[:NEXT*1..]->(rebuy:Transfer)-[t:TO\_CLUB]->(c)}
     \end{quote}
   \end{proposition}
+
+\section{Transformation \& Integration}\label{sec_transformation_and_integration}
 
 \subsection{Data Wrangling}
 
@@ -659,9 +661,271 @@
     \end{itemize}
   \end{remark}
 
-\section{Transformation \& Integration}\label{sec_transformation_and_integration}
+\subsection{Data Fusion}
+
+  \begin{definition}{Data Fusion}
+    \textit{Data Fusion} is the process of taking data from different places it and representing it in a single place\footnote{e.g. Having a robot with multiple sensors, and using the accumulated data to determine the robots actions.}. This should create value my increasing the amount of available data.
+  \end{definition}
+
+  \begin{figure}[H]
+    \centering\includegraphics[width=.7\textwidth]{ETL.PNG}
+    \caption{Example of an Extract Tranform Load approach to \textit{Data Fusion}.}
+    \label{fig_ETL}
+  \end{figure}
+
+  \begin{proposition}{Extract. Transform, Load (ETL)}
+    \textit{Extract. Transform, Load} (ETL) is an approach to \textit{Data Fusion} where all the data sources are centralised.
+    \par See \texttt{Figure \ref{fig_ETL}} from an example.
+  \end{proposition}
+
+  \begin{figure}[H]
+    \centering\includegraphics[width=.7\textwidth]{DataIntegration.PNG}
+    \caption{Example of an Data-Integration approach to \textit{Data Fusion}.}
+    \label{fig_data_integration}
+  \end{figure}
+
+  \begin{proposition}{Data-Integration Solution}
+    \textit{Data-Integration Solution} is an approach to \textit{Data Fusion} where ``wrappers'' are created for each data source, allowing each to be read using the same schema.
+    \par See \texttt{Figure \ref{fig_data_integration}} from an example.
+  \end{proposition}
+
+  \begin{definition}{Data Heterogeneity}
+    \textit{Data Heterogeneity} is the property that datasets can vary. Data can be different in may ways, including
+    \begin{itemize}
+      \item Temporally.
+      \item Spatially.
+      \item Encoding used.
+      \item Collection method.
+      \item Units of measurement.
+      \item License.
+      \item Whether missing values have been imputed.
+    \end{itemize}
+  \end{definition}
+
+  \begin{remark}{Other Issues for Data Fusion}
+    Here are some issues which may affect the robustness of some \textit{Data Fusion} methods
+    \begin{itemize}
+      \item Bad Data - Even if a small part of the data is corrupted then the all the data is compromised.
+      \item Lack of Storage - \textit{Data Fusion} methods which centralise all the data will need large disk capacity.
+      \item Original Data Sources - If you are interacting with third-party data sources there is a greater risk it will change/be taken down.\footnote{Documentation for data sources will often help alleviate this.}
+    \end{itemize}
+  \end{remark}
+
+  \begin{definition}{Object Relational Mapping}
+    \textit{Object Relational Mapping}\footnote{Examples - Django, MonoEngine, Hibernate.} is an approach to aggregating data from multiple data sources into ``virtual databases'' by creating an interface between the user and the data sources. This makes incompatible data sources ``appear'' compatible. This interface is designed to be flexible and easy to use.
+    \par This should speed-up development and allow for migration to be handled automatically. But, gives the user less control (often making complex queries very difficult) and has slower execution speed than directly interacting with the data sources.
+    \par \textit{Object Relational Mappings} are often optimised for certain common queries.
+  \end{definition}
 
 \section{Exploration \& Visualisation}\label{sec_exploration_and_visualisation}
+
+  \begin{remark}{Common Questions about Data}
+    Here are three common early questions we may have about some data
+    \begin{enumerate}
+      \item What is the average of the sample?
+      \item What is the spread of the sample?
+      \item What is the effect of outliers?
+    \end{enumerate}
+  \end{remark}
+
+  \begin{definition}{Inferential Statistics}
+    \textit{Inferential Statistics}\footnote{AKA Inductive Statistics} summarise a \underline{sample} and are based on probability theory.
+  \end{definition}
+
+  \begin{definition}{Descriptive Statistics}
+    \textit{Descriptive Statistics} describe or summarise a \underline{dataset}. \textit{Descriptive Statistics} are useful for assessing data quality, developing models and improving our general understanding about a dataset.
+  \end{definition}
+
+  \begin{definition}{Variables}
+    There are several classes of variable
+    \begin{itemize}
+      \item \textit{Qualitiative Variables} - Categorical or discrete data. (inc. nominal, ordinal)
+      \item \textit{Quantitative Variables} - Continuous data. (inc. intervals \& ratios)
+    \end{itemize}
+  \end{definition}
+
+  \begin{definition}{Univariate Measures}
+    \textit{Univariate Measures} are measures which describe only one characteristic of a sample/dataset. There are several classes of \textit{Univariate Measures}
+    \begin{itemize}
+      \item \textit{Central Tendency} (e.g. mean, median, mode).
+      \item \textit{Variabiltiy} (e.g. variance,quartiles,max,min,skew). See \texttt{Definition \ref{sec_exploration_and_visualisation}.\ref{def_measures_of_variability}}
+      \item \textit{Graphical formats} (e.g histograms).
+    \end{itemize}
+  \end{definition}
+
+  \begin{remark}{Deciding which ``Central Tendency'' measure to use}
+    Plotting a \textit{Histogram} of the data will help decide between using mean, median or mode due to being able to observe the distribution and existence of outliers.
+  \end{remark}
+
+  \begin{proposition}{Measures of Variability}\label{def_measures_of_variability}
+    Here are some measures of variability in a data set
+    \begin{itemize}
+      \item Range $\max-\min$.
+      \item Variance $\var(X):=\frac1n\sum(X_i-\mu)^2$.
+      \item Unbiased variance $\var(X)=\frac1{n-1}\sum(X_i-\mu)^2$.\footnote{Accounts for how sample mean varies $\bar{X}$ from true mean $\mu$}
+      \item Standard deviation $\sigma=\sqrt{\var(X)}$.
+      \item Quantiles - Values at which $\frac14,\frac12,\frac34$ lies beneath.
+      \item Percentiles - Values at which $N\%$ of the data lies beneath.
+    \end{itemize}
+  \end{proposition}
+
+  \begin{definition}{Raw Moments}
+    Let $X$ be a random variable. The \textit{$n^{th}$ Raw Moment} of $X$ is defined as
+    \[ \expect[X^n] \]
+    This means that the first moment is the expected value and the variance can be derived from the first two moments.
+  \end{definition}
+
+  \begin{definition}{Central Moment $\mu_n$}
+    Let $X$ be a random variable. The \textit{$n^{th}$ Central Moment} of $X$ is defined as
+    \[ \mu_n:=\expect[(X-\expect[X])^2] \]
+    The zeroth central moment is 1; first central moment is the expected value; the second central moment is the variable.\footnote{The third and fourth central moments are used to define skewness and kurtosis, respectively.}
+  \end{definition}
+
+  \begin{definition}{Standardised Moments $\bar{\mu_n}$}
+    The $n^{th}$\textit{Standardised Moment} is the ratio of the $n^th$ centralised moment and the standard deviation to the power of $n$
+    \[ \bar{\mu_n}:=\frac{\mu_n}{\sigma^n}=\frac{\expect[(X-\mu)^n]}{(\sqrt{\expect[(X-\mu)^2]})^n} \]
+    \textit{Standarised Moments} differ in proeprties other than variability, allowing for comparison of shape of distributions.
+  \end{definition}
+
+  \begin{remark}{Cumulants}
+    \textit{Cumulants} are another alternative to moments but they seem niche so I cba to define them.
+  \end{remark}
+
+  \begin{definition}{Skewness}
+    \textit{Skewness} is a measure of distribution shape, describing how lopsided a distribution is.
+    \[ \text{Skew}[X]:=\expect\left[\left(\frac{X-\mu}{\sigma}\right)^3\right]=\frac{\mu_3}{\sigma^3} \]
+    $\text{Skew}[X]<0$ means the distribution has more values to the right, and $\text{Skew}[X]>0$ it has more values to the left.
+  \end{definition}
+
+  \begin{definition}{Kurtosis}
+    \textit{Kurtosis} measures the heaviness of the tail of a distribution, compared to a normal distribution with the same variance.
+    \[ \text{Kurt}[X]=\expect\left[\left(\frac{X-\mu}{\sigma}\right)^4\right]=\frac{\mu_4}{\sigma^4} \]
+    Since the \textit{Kurtosis} of a normal is $3\sigma^4$, we define \textit{Excess Kurtosis} as $\text{Kurt}[X]-3$.
+  \end{definition}
+
+\subsection{Data Transformation}
+
+  \begin{definition}{Variance Stabilising Transforms}
+    \textit{Variance Stabilising Transforms} are a set of transforms which ensure the variance of each observation is approximately the same. This can be difficult in some cases as the variance may not be constant, but it is related to the mean\footnote{i.e. For a poisson distribution $\var(X)=\expect[X]$.}
+    \par A \textit{Box-Cox Transformation} is one such transform.
+  \end{definition}
+
+  \begin{definition}{Decorrelation}
+    \textit{Decorrelation} is the practice of removing correlation between different variables. This emphasises the differences between variables, allowing for more data to be extracted.
+    \par \textit{Principle Component Analsysis} is a \textit{Decorrelation} method.
+  \end{definition}
+
+  \begin{proposition}{Decorrelation - Maths}
+    \textit{Decorrelation} transforms data st it has a diagonal \textit{Convariance Matrix} $\Sigma=X^TX$. This is done by finding the eigenvaluse of
+    \[ \Sigma\Phi=\Phi\Lambda \]
+    where $\Lambda$ is a diagonal matrix of eigenvalues and the columns of $\Phi$ are the eigenvectors of the covariance matrix (i.e. $\Phi$ diagonalises $\Sigma$). Equivalently
+    \[ \Phi^T\Sigma\Phi=\Lambda \]
+    We can decorrelate a single vector $x_i$ (at test time) by calculating
+    \[ \hat{x}_i:=\Phi^Tx_i \]
+  \end{proposition}
+
+  \begin{definition}{Whitening Data}
+    \textit{Whitening Data} is the practice of transforming data such that all variables have the same mean and variance. This makes the data more comparable.
+  \end{definition}
+
+  \begin{proposition}{Whitening Data - Maths}
+    When \textit{Whitening Data} we are ensuring the eigenvalues in $\Lambda$ are all the same. As eigenvalues determine the length of eigenvectors, ensuring all eigenvalues are the same makes the covariance matrix $\Sigma$ spherical (rather than elliptical).
+  \end{proposition}
+
+  \begin{remark}{When to Whiten Data}
+    There are some scenarios when it is not good to \textit{Whiten Data}, including
+    \begin{itemize}
+      \item When the scale of data is important to your inference problem. In this case, eigenvalues could be a useful set of features for inference.
+      \item The covariance matrix may be computationally intractable. And, eigenvalues decomposition takes $O(n^3)$ time.
+      \item In machines learning you need to use the exact same transformation on training and testing data. These transformations are determined using the training data.
+    \end{itemize}
+  \end{remark}
+
+\subsection{Density Estimation}
+
+  \begin{definition}{Density Estimation}
+    \textit{Density Estimation} is the process of computing the probability distribution which underlies the data. There are two main approaches\footnote{There are also \textit{Semi-Parametric Methods} such as the Dirichlet Process Mixture Model.}
+    \begin{enumerate}
+      \item \textit{Parametric Approach} - Assume the histogram of the data follows some common-simple distribution\footnote{Often a gaussian}, this means we only need to estimate the parameters of this distribution (mean, variance). This can be extended using \textit{Gaussian Mixture Models}\footnote{A collection of Gaussians each with a different weighting, fitted using the \textit{Expectation-Maximisation Algorithm}.}
+      \par A limitation of this is that we are encoding our assumptions into the model, which may not be sound.
+      \item \textit{Non-Parametric Approach} - Use the histogram of the data as the distribution. This does not require prior knowledge and inference is easy, but is computationally expensive. This can be extended using \textit{Kernel Density Estimation}.
+    \end{enumerate}
+  \end{definition}
+
+  \begin{definition}{Kernel Density Estimation}
+    \textit{Kernel Density Estimation} uses the following formula to estimate the density $\hat{f}_h(x)$ from the data $\{x_1,\dots,x_n\}$
+    \[ \hat{f}_h(x)=\frac1n\sum_{i=1}^nK_h(x-x_i)=\frac1{nh}\sum_{i=1}^nK\left(\frac{x-x_i}h\right) \]
+    where $K$ is a smoothing kernel.
+  \end{definition}
+
+\subsection{Multi-Variate Analysis}
+
+  \begin{definition}{Multivariate Analysis}
+    \textit{Multivariate Analysis} is performed on samples which consist of multiple variables. \textit{Descriptive Statistics} are often used to describe the relationship between pairs of variables (e.g. Cross-tabulations, contingency tables \& graphical representations)
+  \end{definition}
+
+  \begin{figure}[H]
+    \centering\includegraphics[width=.7\textwidth]{NonLinearDimensionalityReductionTaxonomy.PNG}
+    \caption{Taxonomy of methods for non-linear dimensionality reduction.}
+    \label{fig_non_linear_dimensionality_reduction_taxonomy}
+  \end{figure}
+
+  \begin{definition}{Dimensionality Reduction}
+    \textit{Dimensionality Reduction} is the process of reducing the number of variables in each sample, by summarising them.\footnote{Reducing to 2 or 3 dimensions is popular as it is easy to visualise.} We generally choose to do this due to computational limitations.
+    \par The two approaches are \textit{Linear Dimensionality Reduction} and \textit{Non-Linear Dimensionality Reduction} (See \texttt{Figure \ref{fig_non_linear_dimensionality_reduction_taxonomy}}).
+  \end{definition}
+
+  \begin{definition}{Principle Component Analysis}
+    \textit{Principle Component Analysis} (PCA) is a \textit{Linear Dimensionality Reduction} which aims to keep as much variance as possible. Here is the general process to follow
+    \begin{enumerate}
+      \item Standardise the data.
+      \item Obtain the eigenvectors and eigenvalues from the covariance matrix.
+      \item Sort the eigenvalues in descending order and choose the $k$\footnote{With $k\ll n$ where $n$ is the number of dimensions in each sample.} eigenvectors which correspond to the largest eigenvalues.
+      \item Construct the projection matrix $R\in\reals^{k\times m}$ from these eigenvectors.
+      \item Transform the original dataset $X\in\reals^{m\times n}$ using $R$ to obtain $P\in\reals^{m\times k}$.
+      \[ P=XR \]
+    \end{enumerate}
+  \end{definition}
+
+  \begin{definition}{Random Projections}
+    \textit{Random Projections} is a simplified version of \textit{Principle Component Analysis} which does not prioritise maximising variability. In the below equation $R$ is chosen at random, we just hope it is good.\footnote{There are extensions we aim to make this more likely.}
+    \[ P=XR\]
+    where $X\in\reals^{m\times n}$ is data matrix, $R\in\reals^{k\times m}$ is the projection matrix and $P\in\reals^{m\times k}$ is the resulting lower-dimensional representation.
+  \end{definition}
+
+  \begin{definition}{Gaussian Random Projections}\label{def_gaussian_random_projections}
+    \textit{Gaussian Random Projections} is an extension of \textit{Random Projections} which places restrictions on how $R$ is chosen.
+    \begin{enumerate}
+      \item First row is a random unit vector, chosen uniformly at random.
+      \item Second row is a random unit vector chosen from the space which is orthogonal to the first row.
+      \item Third row is a random unit vector chosen from the space which is orthogonal to the first two rows.
+      \item etc.
+    \end{enumerate}
+    This method means that $R$ has \textit{Spherical Symmetry, orthogonality} and \textit{Normality}.
+  \end{definition}
+
+  \begin{theorem}{Johnson-Lindenstrauss Lemma}
+    Given $\varepsilon\in(0,1)$ a set $X$ of $m$ points in $\reals^n$ and a number $k>\frac8{\varepsilon^2}\ln(m)$, there is a linear map $f:\reals^n\to\reals^k$ st for all $\mathbf{u},\mathbf{v}\in X$
+    \[ (1-\varepsilon)\|\mathbf{u}-\mathbf{v}\|^2\leq\|f(\mathbf{u})-f(\mathbf{v})\|^2\leq(1+\varepsilon)\|\mathbf{u}-\mathbf{v}\|^2 \]
+    This means generating random projections as described in \texttt{Definition \ref{sec_exploration_and_visualisation}.\ref{def_gaussian_random_projections}} (as they are orthogonal projections) will, in general, reduce the average distance between points.
+  \end{theorem}
+
+  \begin{remark}{Database Friendly Random Projections}
+    Choosing the elements of our projection matrix $R$ as below is database friendly
+    \[ R_{i,j}=\sqrt3\cdot\begin{cases}1&\text{with prob }1/6\\0&\text{with prob }2/3\\-1&\text{with prob }1/6\end{cases} \]
+    This is database friendly as elements ar $\{1,0,-1\}$, making the sampling process very simple (easy for a computer).
+  \end{remark}
+
+  \begin{definition}{$t$-Distributed Stochastic Neighbour Embedding ($t$-SNE)}
+    \textit{$t$-Distributed Stochastic Neighbour Embedding} ($t$-SNE) is a \textit{Non-Linear Dimensionality Reduction} method which tries to capture the relationship between samples and their neighbours (in the high-dimensional space), and then aims to keep these relationships the same in the lower-dimensional space (ie the closest neighbours of each sample are the same before and after transformation).
+    \par This is done by modelling the distribution of pairwise similarities as a \textit{Student $t$-Distribution}. Let $P_i$ be the distributions of pairwise similarities for input objects and $Q_i$ for the distribution after the transformation. The problem is now to minimise the distance between the two, this is done by minimising the cost function\footnote{Generally using stochastic gradient descent.}
+    \[ C=\sum_iKL(P_i,Q_i)=\sum_i\sum_jp_{j|i}\ln(p_{j|i}-q_{j|i}) \]
+  \end{definition}
+
+  \begin{remark}{Using $t$-SNE}
+    \textit{$t$-SNE} is best used after a PCA step, it does not perform well as a pre-processing step. This is due to \textit{$t$-SNE} focusing on pairwise relationships (which is local) and may not do well on the global scope.
+    \par Each time \textit{$t$-SNE} is run a different visualisation may occur.
+  \end{remark}
 
 \section{Deployment}\label{sec_deployment}
 
