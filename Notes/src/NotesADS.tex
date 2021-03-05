@@ -927,7 +927,153 @@
     \par Each time \textit{$t$-SNE} is run a different visualisation may occur.
   \end{remark}
 
-\section{Deployment}\label{sec_deployment}
+\section{Data Science in Production}\label{sec_production}
+
+\subsection{Failure is the Rule}
+
+  \begin{remark}{Failure is the Rule}
+    ~90\% of data-science projects fail due to the complexity of the production pipeline for data-science.
+    \par A common approach is to ``Fail often and Fail cheaply.''
+  \end{remark}
+
+  \begin{remark}{Stages of Production}
+    There are the typical stages when applying data-science in production
+    \begin{enumerate}
+      \item \textit{Planning} - Identify the problem and justifying the need for data-science to be used. If this is successful then you need to plan a strategy, determine a budget, hire staff and outline goals (SMART goals).
+      \item \textit{Proof-of-Concept}\footnote{AKA ``Lighthouse Projects'' as they shed light on projects.} - Test approaches on a sample of the data. Explore the available data. Build and verify a model.
+      \item \textit{Production} - Set up regular flows of data. Check there is no unreasonable bias in your model. Ensure the correct security and governance\footnote{Regular checks of the models performance and ``alerts'' when odds results occur.} procedures are in place. Pay attention to when new trends are arise which your model needs to be retrained for\footnote{Ideally the model would be continuously learning.}. Account for label drifting\footnote{The labels in the data may change their meaning over time.}.
+    \end{enumerate}
+  \end{remark}
+
+  \begin{proposition}{Components of the ``Proof-of-Concept'' Step}
+    A \textit{Proof-of-Concept} can be broken down into the following steps
+    \begin{itemize}
+      \item Data Management:
+      \begin{itemize}
+        \item Data collection.
+        \item Data pre-processing.
+        \item Data augmentation.
+        \item Data analysis.
+      \end{itemize}
+      \item Model Learning:
+      \begin{itemize}
+        \item Model selection.\footnote{In a business setting you often need to model to be interpretable and some-what agree with preconceptions of your stakeholders.}
+        \item Training.
+        \item Hyper-parameter selection.
+      \end{itemize}
+      \item Model Verification:
+      \begin{itemize}
+        \item Requirement encoding.
+        \item Formal verification.
+        \item Test-based verification.
+      \end{itemize}
+    \end{itemize}
+  \end{proposition}
+
+  \begin{proposition}{Components of the Production Step}
+    The \textit{Production Step} can be broken down into the following steps
+    \begin{itemize}
+      \item Model deployment
+      \begin{itemize}
+        \item Integration.
+        \item Monitoring.
+        \item Updating
+      \end{itemize}
+      \item Cross-cutting aspects
+      \begin{itemize}
+        \item Ethics.
+        \item End users' trust.
+        \item Security.
+      \end{itemize}
+    \end{itemize}
+  \end{proposition}
+
+\subsection{Engineering Guarantees for Data Science}
+
+  \begin{figure}[H]
+    \centering\includegraphics[width=.7\textwidth]{DataOps.PNG}
+    \caption{Data Operations pipline}
+    \label{fig_data_ops}
+  \end{figure}
+
+  \begin{proposition}{Data Validator}
+    A Data Validator should ensure that the data in specific fields is of the type we expect and within expected ranges/formats. This is pretty straight-forward for structured and semi-structured data, for unstructured data (e.g images and text) less validation is possible and you may need to abstract the data before validation.
+  \end{proposition}
+
+  \begin{proposition}{Data Analyser}
+    A Data Analyser should perform basic statistical procedures to check for bias, distribution skew, clusters etc.. In general, you need to be checking these features constantly in both production and deployment.
+  \end{proposition}
+
+  \begin{proposition}{Model Unit Tester}
+    A Model Unit Tester looks for errors in the training code using synthetic data. Much of this is similar to standard software testing.
+    \par They may also need to perform tests to fulfil regulatory/legal requirements (i.e. the model is explainable).
+  \end{proposition}
+
+  \begin{proposition}{Tests on Features}
+    Here are some tests which can be performed on a model (other than just visual inspection)
+    \begin{itemize}
+      \item \textit{Score Decomposition} - (Not recommended these days due to non-linearity).
+      \item \textit{Ablation Testing} - Remove features one at a time, retrain and observe the difference.\footnote{Popular but nor recommended due to ``Trigger's Broom Paradox''.}
+      \item \textit{Feature Permutation} - Choose a feature and augment its values to something which would never occur IRL and observe how other features compensate. This will demonstrate correlations and thus relevance.
+      \item \textit{Top-Bottom Analysis} - Compare distributions of inputs and outputs. This will demonstrate correlations and thus relevance.
+    \end{itemize}
+  \end{proposition}
+
+  \begin{remark}{Feature Store}
+    Some companies make us of a special ``Feature Store'' database where previously used features are stored so that their information is not lost even if they are not used in deployment.
+  \end{remark}
+
+  \begin{proposition}{Monitoring}
+    We want to monitor the output of the model so when the output falls outside some criteria an alert is triggered and someone can investigate.
+    \par Model performance dashboards are often used to help monitoring. These dashboards typically display: model output metrics; data input metrics; and, operational telemetry.
+  \end{proposition}
+
+  \begin{proposition}{Dimensions of Testing}
+    There are often many different dimensions to consider when testing a model. Almost always you want to test the inputs and outputs, but often you will need to test several models and under different conditions (different cities, markets etc.)
+  \end{proposition}
+
+  \begin{proposition}{Comparing Algorithms - Large Dataset}
+    Here are some methods for comparing different aspects of several models, when you have access to a large dataset
+    \begin{itemize}
+      \item \textit{Performance Estimation}
+      \begin{itemize}
+        \item Two-way holdout method (train-test split).
+        \item Confidence interval via normal approximation.
+      \end{itemize}
+      \item \textit{Model Selection, hyperparameter optimisation and performance estimation}
+      \begin{itemize}
+        \item Three-way holdout methods (train-validate-test split).
+      \end{itemize}
+      \item \textit{Model \& algorithm comparison}
+      \begin{itemize}
+        \item Multiple independent training sets + test sets
+        \item McNemar test.
+        \item Cochran's Q + McNemar test
+      \end{itemize}
+    \end{itemize}
+  \end{proposition}
+
+  \begin{proposition}{Comparing Algorithms - Small Dataset}
+    Here are some methods for comparing different aspects of several models, when you have access to a small dataset
+    \begin{itemize}
+      \item \textit{Performance Estimation}
+      \begin{itemize}
+        \item Repeated $k$-fold cross validation without independent test set.
+        \item Leave-one-out cross validation without independent test set.
+        \item Confidence interval via 0.632(+) bootstrap.
+      \end{itemize}
+      \item \textit{Model Selection, hyperparameter optimisation and performance estimation}
+      \begin{itemize}
+        \item Repeated $k$-fold cross validation with independent test set.
+        \item Leave-one-out cross validation with independent test set.
+      \end{itemize}
+      \item \textit{Model \& algorithm comparison}
+      \begin{itemize}
+        \item Combined 5x2cv F test.
+        \item Nested cross-validation.
+      \end{itemize}
+    \end{itemize}
+  \end{proposition}
 
 \section{Sharing \& Privacy}\label{sec_sharing_and_privacy}
 
