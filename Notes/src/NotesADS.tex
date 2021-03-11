@@ -927,6 +927,82 @@
     \par Each time \textit{$t$-SNE} is run a different visualisation may occur.
   \end{remark}
 
+\subsection{Data Visualisation}
+
+  \begin{remark}{Why Visualise?}
+    There are several motivations to visualise our data, inc.
+    \begin{itemize}
+      \item Making sense of the data.
+      \item Discovering features and patterns of the data.
+      \item Communicating these features and patterns to others.
+      \item Monitoring processes where we want to detect changes.
+    \end{itemize}
+    Visualisation is preferable over raw data as humans are better at detecting patterns in visual forms, than in raw numbers.
+  \end{remark}
+
+  \begin{figure}[H]
+    \centering\includegraphics[width=.7\textwidth]{GestaltPrinciples.PNG}
+    \caption{The Gestalt Principles}
+    \label{fig_Gestalt_Principles}
+  \end{figure}
+
+  \begin{proposition}{Gestalt Principles}
+    The \textit{Gestalt Principles} are a set of ways in which humans group similar elements, recognise patterns or simplify complex images. See \texttt{Figure .\ref{fig_Gestalt_Principles}}.
+  \end{proposition}
+
+  \begin{figure}[H]
+    \centering\includegraphics[width=.7\textwidth]{PreattentiveFeatures.PNG}
+    \caption{Common pre-attentive features}
+    \label{fig_preattentive_features}
+  \end{figure}
+
+  \begin{proposition}{Pre-Attentive Features}
+    \textit{Pre-Attentive Features} are small features which commonly draw a humans attention and thus what we should use to emphasise certain details during visualisation. See \texttt{Figure \ref{fig_preattentive_features}}.
+  \end{proposition}
+
+  \begin{remark}{Criteria for Evaluation}
+    When producing a visualising we will need to focus on certain goals, which may inc.
+    \begin{itemize}
+      \item Easy navigability (minimal eye travel).
+      \item Which designs are best in black and white (use may not have access to colour, or be colourblind).
+      \item Maximising information-to-ink ratio.
+    \end{itemize}
+  \end{remark}
+
+  \begin{remark}{What to Use}
+    Which plot to use depends on your data and what you wish to show
+    \begin{itemize}
+      \item \textit{Line Graph} - Changes over a time-period.
+      \item \textit{Pie Chart} - Basically never.
+      \item \textit{Divided Rectangle} - Compare parts of a whole.
+      \item \textit{Bar Graph} - Compare between different groups
+      \item \textit{Histogram} - Changes over time or probability distributions.\footnote{The key difference between a histogram and bar-graph is that the width of a bar in a histogram matters.}
+    \end{itemize}
+    \url{http://survery.timeviz.net/} is a website where you can specify features about your data and it will recommend plots to you.
+  \end{remark}
+
+  \begin{proposition}{Exploratory Data Analysis Circle}
+    \textit{Exploratory Data Analysis} typically follows the following cycle
+    \begin{enumerate}
+      \item Collect data.
+      \item Discern patterns in the data.
+      \item Hypothesise which models match the data.
+      \item Test the models for accuracy.
+      \item REPEAT.
+    \end{enumerate}
+  \end{proposition}
+
+  \begin{proposition}{Tools for Visualisation}
+    Different languages have different packages available for visualisations
+    \begin{itemize}
+      \item \textit{R} - Built in methods.
+      \item \textit{Python} - \texttt{matplotlib}, \texttt{seaborn}, \texttt{ggplot}.
+      \item \textit{JavaScript} - \texttt{D3.js}
+      \item Commercial tools - \textit{Tableau}
+    \end{itemize}
+    Most of these packages utilise other packages to make them more powerful (e.g. \texttt{pandas}  for the python packages).
+  \end{proposition}
+
 \section{Data Science in Production}\label{sec_production}
 
 \subsection{Failure is the Rule}
